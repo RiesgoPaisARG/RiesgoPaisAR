@@ -596,5 +596,3 @@ else:
     print("Fuera del horario permitido. Bot en espera...")
 
 # Fin del script
-# 🔧 TEST TEMPORAL PARA FORZAR UN TWEET
-postear_resumen_diario()

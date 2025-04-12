@@ -535,66 +535,64 @@ def postear_resumen_mensual():
     # Guardar el valor actual como el último día del mes
     guardar_valor_ultimo_dia_mes_anterior(valor_actual)
 
-# Bucle principal
+# Bloque principal - ejecución única
 actualizado_hoy = False
 resumen_diario_posteado = False
 grafico_posteado = False
 resumen_mensual_posteado = False
 
-while True:
-    # Obtener la hora y día actual en la zona horaria de Buenos Aires
-    ahora = datetime.now(pytz.timezone('America/Argentina/Buenos_Aires'))
-    hora_actual = ahora.time()
-    dia_actual = ahora.weekday()  # 0 = Lunes, 6 = Domingo
-    ultimo_dia_mes = (ahora + timedelta(days=1)).day == 1 # Verificar si es el último día del mes
-    
-    # Publicar resumen mensual el último día del mes a las 22:00
-    if ultimo_dia_mes and hora_actual.hour == 22 and 10 <= hora_actual.minute <= 15 and not resumen_mensual_posteado:
-        postear_resumen_mensual()
-        resumen_mensual_posteado = True
+# Obtener la hora y día actual en la zona horaria de Buenos Aires
+ahora = datetime.now(pytz.timezone('America/Argentina/Buenos_Aires'))
+hora_actual = ahora.time()
+dia_actual = ahora.weekday()  # 0 = Lunes, 6 = Domingo
+ultimo_dia_mes = (ahora + timedelta(days=1)).day == 1  # Verificar si es el último día del mes
 
-    # Resetear indicador al inicio de un nuevo mes
-    if ahora.day == 1 and hora_actual.hour == 0:
-        resumen_mensual_posteado = False
-    
-    # Publicar gráfico los Domingos a las 19:30
-    if dia_actual == 6 and hora_actual.hour == 19 and 30 <= hora_actual.minute <= 35 and not grafico_posteado:
-        postear_grafico()
-        grafico_posteado = True
-        
-    # Verificar si está dentro del horario permitido
-    if dia_actual < 5 and (hora_actual >= datetime.strptime("08:00", "%H:%M").time() or hora_actual <= datetime.strptime("01:00", "%H:%M").time()):
-        nuevo_valor = obtener_riesgo_pais()
-        
-        if nuevo_valor is not None and nuevo_valor != 0:
-            ultimo_valor = leer_ultimo_valor_guardado()
-            if ultimo_valor is None or (abs(nuevo_valor - ultimo_valor) > 300):
-                print(f"La diferencia entre los valores es demasiado grande ({abs(nuevo_valor - ultimo_valor)} puntos). No se publicará el tweet.")
-            elif abs(nuevo_valor - ultimo_valor) != 0:
-                postear_tweet(nuevo_valor, ultimo_valor)
-            else:
-                print(f"El riesgo país no cambió. Valor actual: {nuevo_valor}")
-        
-        # Verificar si la hora está entre 23:50 y 23:55 para actualizar el valor del día anterior
-        if hora_actual.hour == 23 and 50 <= hora_actual.minute <= 55 and not actualizado_hoy:
-            actualizar_valor_dia_anterior()
-            guardar_historico_riesgo_pais(nuevo_valor)
-            actualizado_hoy = True
-            resumen_diario_posteado = False  # Permitir que se postee el resumen al día siguiente
-            print("Valor del día anterior actualizado y Valor historico agregado.")
-        
-        # Postear el resumen diario a las 22:00
-        if hora_actual.hour == 22 and not resumen_diario_posteado:
-            postear_resumen_diario()
-            resumen_diario_posteado = True
-        
-        # Resetear el indicador al inicio de un nuevo día
-        if hora_actual.hour == 0:
-            actualizado_hoy = False
-            resumen_diario_posteado = False
-            grafico_posteado = False
-    else:
-        print("Fuera del horario permitido. Bot en espera...")
+# Publicar resumen mensual el último día del mes a las 22:00
+if ultimo_dia_mes and hora_actual.hour == 22 and 10 <= hora_actual.minute <= 15 and not resumen_mensual_posteado:
+    postear_resumen_mensual()
+    resumen_mensual_posteado = True
 
-    # Esperar 5 minutos antes de la próxima verificación
-    time.sleep(300)  # 5 minutos = 300 segundos
+# Resetear indicador al inicio de un nuevo mes
+if ahora.day == 1 and hora_actual.hour == 0:
+    resumen_mensual_posteado = False
+
+# Publicar gráfico los Domingos a las 19:30
+if dia_actual == 6 and hora_actual.hour == 19 and 30 <= hora_actual.minute <= 35 and not grafico_posteado:
+    postear_grafico()
+    grafico_posteado = True
+
+# Verificar si está dentro del horario permitido
+if dia_actual < 5 and (hora_actual >= datetime.strptime("08:00", "%H:%M").time() or hora_actual <= datetime.strptime("01:00", "%H:%M").time()):
+    nuevo_valor = obtener_riesgo_pais()
+
+    if nuevo_valor is not None and nuevo_valor != 0:
+        ultimo_valor = leer_ultimo_valor_guardado()
+        if ultimo_valor is None or (abs(nuevo_valor - ultimo_valor) > 300):
+            print(f"La diferencia entre los valores es demasiado grande ({abs(nuevo_valor - ultimo_valor)} puntos). No se publicará el tweet.")
+        elif abs(nuevo_valor - ultimo_valor) != 0:
+            postear_tweet(nuevo_valor, ultimo_valor)
+        else:
+            print(f"El riesgo país no cambió. Valor actual: {nuevo_valor}")
+
+    # Verificar si la hora está entre 23:50 y 23:55 para actualizar el valor del día anterior
+    if hora_actual.hour == 23 and 50 <= hora_actual.minute <= 55 and not actualizado_hoy:
+        actualizar_valor_dia_anterior()
+        guardar_historico_riesgo_pais(nuevo_valor)
+        actualizado_hoy = True
+        resumen_diario_posteado = False  # Permitir que se postee el resumen al día siguiente
+        print("Valor del día anterior actualizado y Valor historico agregado.")
+
+    # Postear el resumen diario a las 22:00
+    if hora_actual.hour == 22 and not resumen_diario_posteado:
+        postear_resumen_diario()
+        resumen_diario_posteado = True
+
+    # Resetear el indicador al inicio de un nuevo día
+    if hora_actual.hour == 0:
+        actualizado_hoy = False
+        resumen_diario_posteado = False
+        grafico_posteado = False
+else:
+    print("Fuera del horario permitido. Bot en espera...")
+
+# Fin del script

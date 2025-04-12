@@ -597,7 +597,4 @@ else:
 
 # Fin del script
 # 🔧 TEST TEMPORAL PARA FORZAR UN TWEET
-nuevo_valor = obtener_riesgo_pais()
-if nuevo_valor:
-    ultimo_valor = leer_ultimo_valor_guardado()
-    postear_tweet(nuevo_valor, ultimo_valor)
+postear_resumen_diario()

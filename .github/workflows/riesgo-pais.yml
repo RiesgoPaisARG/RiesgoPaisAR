@@ -1,15 +1,15 @@
-name: Bot Riesgo País
+#name: Bot Riesgo País
 
-on:
-  schedule:
+#on:
+  #schedule:
     # De 08:00 a 23:55 hora Argentina (UTC 11 a 2)
-    - cron: '*/5 11-14 * * 1-5'  # 08:00–11:55 ARG
-    - cron: '*/5 15-20 * * 1-5'  # 12:00–17:55 ARG
-    - cron: '*/5 21-23 * * 1-5'  # 18:00–20:55 ARG
-    - cron: '*/5 0 * * 2-6'      # 21:00–22:55 ARG del día anterior (es decir, 00:00 UTC a 01:00 ARG de martes a sábado)
-  workflow_dispatch:
+    #- cron: '*/5 11-14 * * 1-5'  # 08:00–11:55 ARG
+    #- cron: '*/5 15-20 * * 1-5'  # 12:00–17:55 ARG
+    #- cron: '*/5 21-23 * * 1-5'  # 18:00–20:55 ARG
+    #- cron: '*/5 0 * * 2-6'      # 21:00–22:55 ARG del día anterior (es decir, 00:00 UTC a 01:00 ARG de martes a sábado)
+  #workflow_dispatch:
 
-jobs:
+#jobs:
   run-bot:
     runs-on: ubuntu-latest
     env:
